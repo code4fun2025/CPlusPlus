@@ -1,0 +1,109 @@
+class Solution {
+public:
+/*
+        DFS
+        1. Check the whole grid rows and cols for dfs
+        2. If it's out of bound or cannot find land node, return directly
+        3. Mark node is visisted and perform further DFS
+
+        BFS
+        1. Check the whole grid rows and cols for bfs
+        2. Set up queue and add 1st node to the queue, mark it visited
+        3. Walk the queue for bfs until it's empty
+           3.1 Pop out 1st node in the queue
+           3.2 Setup 4 directions
+           3.3 for each direction, if find new land node, mark it visit and add it back to the queue for further bfs
+
+*/
+    int numIslands(vector<vector<char>>& grid) {
+        if (&grid == NULL || grid.size() == 0 )
+        {
+            return 0;
+            
+        }
+        
+        int ROWS = grid.size();
+        int COLS = grid[0].size();
+        int count = 0;
+        
+        //#1. Check the whole grid to go over all the rows and columns        
+        for(int i = 0; i < ROWS; i ++)
+        {
+            for(int j = 0; j < COLS; j ++)
+            {
+                if(grid[i][j] == '1')
+                {
+                    dfs(grid, i, j);
+                    //comment above dfs out and uncomment blow bfs for bfs approach
+                    //bfs(grid, i, j);
+                    count++;                    
+                }
+            }
+        }
+        
+        
+        return count;
+    }
+
+    void dfs(vector<vector<char>>& grid, int r, int c) {
+        int ROWS = grid.size();
+        int COLS = grid[0].size();
+        
+        //#2. If it's out of bound or cannot find land node, return directly
+        if (r < 0 || r >= ROWS || 
+            c < 0 || c >= COLS || 
+           grid[r][c] != '1')
+        {
+            return;
+        }
+
+        //#3. Mark node is visisted and perform further DFS
+        grid[r][c] = '2';
+        dfs(grid, r - 1, c);
+        dfs(grid, r + 1, c);
+        dfs(grid, r, c - 1);
+        dfs(grid, r, c + 1);        
+    }
+
+    void bfs(vector<vector<char>>& grid, int i, int j) {
+        int ROWS = grid.size();
+        int COLS = grid[0].size();
+
+        //#2. Set up queue and add 1st node to the queue, mark it visited
+        queue<pair<int, int>> q;
+        //Add 1st node to queue to start bfs search
+        q.push({i, j});
+        //Mark it visited as '2'
+        grid[i][j] = '2';
+
+        //#3. Walk the queue until the queue is empty
+        while(!q.empty())
+        {
+            //#3.1 Pop out 1st node in the queue
+            pair<int, int> cur = q.front();
+            q.pop();
+
+            //#3.2 Set up all 4 directions for bfs search
+            vector<pair<int, int>> directions = {{1,0}, {-1,0}, {0,1}, {0, -1}};
+            for(auto d : directions)
+            {
+                int r = cur.first + d.first;
+                int c = cur.second + d.second;
+
+                //#3.3 If we find new land node, add it back to the queue for bfs and mark it visited
+                if (r >= 0 && r < ROWS && 
+                    c >=0 && c < COLS && 
+                   grid[r][c] == '1')
+                {
+                    q.push({r,c});                       
+                    grid[r][c] = '2';
+                }
+
+            }
+        }
+    }
+    
+    
+};
+
+
