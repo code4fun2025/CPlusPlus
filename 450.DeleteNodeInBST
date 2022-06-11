@@ -1,0 +1,40 @@
+class Solution {
+public:
+    TreeNode* deleteNode(TreeNode* root, int key) {
+        if(!root)
+            return root;
+        
+        if(root->val > key)
+            root->left = deleteNode(root->left, key);
+        else if(root->val < key)
+            root->right = deleteNode(root->right, key);
+        else
+        {
+            if(!root->left || !root->right)
+                return root->left ? root->left : root->right;
+            else if (root->right) {
+                TreeNode * next = root->right; 
+                while(next->left)
+                    next = next->left; //locate successor
+
+                root->val = next->val;
+                next->val = key;
+
+                root->right = deleteNode(root->right, key);
+            }
+            else {
+                TreeNode * next = root->left; 
+                while(next->right)
+                    next = next->right; //locate predecessor
+
+                root->val = next->val;
+                next->val = key;
+
+                root->left = deleteNode(root->left, key);
+                
+            }
+        }
+        
+        return root;        
+    }
+};
